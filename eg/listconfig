@@ -1,0 +1,25 @@
+#! /usr/local/bin/perl -w
+#
+# listconfig -- list the contents of an ht://Dig configuration file
+#
+# Usage:  listconfig config_file
+#
+# This primarily intended as a test and demo of the get_config
+# function in the HtDig::Database module.
+#
+# $Id: listconfig,v 1.1 2000/04/19 23:33:48 wjones Exp $
+# $Source: /home/wjones/src/CVS.repo/htdig/local-additions/Database/eg/listconfig,v $
+
+use HtDig::Database qw(:all);
+use strict;
+
+my $config_file = shift
+    or die "usage: $0 config_file\n";
+
+my $config = get_config( $config_file )
+    or die "$0: can't access $config_file\n";
+
+for ( sort keys %$config ) {
+    print "$_:\t$config->{$_}\n";
+}
+

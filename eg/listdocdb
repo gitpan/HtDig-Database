@@ -1,0 +1,78 @@
+#! /usr/local/bin/perl -w
+#
+# listdocdb -- List ht://Dig document database
+#
+# Usage:  listdocdb [-v [-v]] config_file [ docdb_file ]
+#
+# By default, only the URL's are listed from the database.
+# With a single "-v" flag, other fields are also listed,
+# including the first 60 characters of the HEAD excerpt.
+# With two "-v" flags, the full text of the HEAD excerpt
+# is shown.
+#
+# If the docdb file isn't specified on the command line,
+# the path will be found in the config file, or if it
+# can't be found there, a guess will be made based on
+# the path to the config file.
+# 
+# $Id: listdocdb,v 1.1 2000/04/19 23:33:48 wjones Exp $
+# $Source: /home/wjones/src/CVS.repo/htdig/local-additions/Database/eg/listdocdb,v $
+
+use DB_File;
+use HtDig::Database qw(:all);
+use strict;
+
+my $verbose = 0;
+
+while ( @ARGV && $ARGV[0] eq '-v' ) {
+    $verbose++;
+    shift;
+}
+
+my ( $config_file, $docdb ) = @ARGV;
+
+die "Usage: $0 [-v] config_file [docdb_file]\n" if ! $config_file;
+
+my $config = get_config( $config_file ) or
+    die "$0: Can't access $config_file\n";
+
+if ( ! $docdb ) {
+
+    # If database file isn't specified on the command line,
+    # get if from the config file, or guess based on path
+    # to config file.
+   
+    my $database_base = $config->{database_base};
+    if ( ! $database_base ) {
+	my $database_dir = $config->{database_dir};
+	if ( ! $database_dir ) {
+	    my ( $config_dir ) = ( $config_file =~ m|(.*)/| );
+	    $database_dir = $config_dir ? "$config_dir/../db" : "../db";
+	}
+	$database_base = "$database_dir/db";
+    }
+    $docdb = "$database_base.docdb";
+}
+
+my %docdb;
+tie( %docdb, 'DB_File', $docdb, O_RDONLY, 0, $DB_BTREE ) ||
+    die "$0: Unable to open $docdb: $!";
+
+while ( my ( $key, $value ) = each %docdb ) {
+    next if $key =~ /^nextDocID/;
+    if ( ! $verbose ) {
+        print decode_url( $key ), "\n";
+    }
+    else {
+        my %rec = parse_docdb( $value );
+	for ( sort keys %rec ) {
+	    my $field = $rec{$_};
+	    $field = join( "\n\t\t", @$field ) if ref($field) eq 'ARRAY';
+	    $field = localtime( $field )       if /^(TIME|ACCESSED)$/;
+	    $field = substr( $field, 0, 60 )   if /^HEAD$/ && $verbose < 2;
+	    printf "%13s:  %s\n", $_, $field;
+	}
+	print '='x60, "\n";
+    }
+}
+

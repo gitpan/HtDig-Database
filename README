@@ -1,0 +1,44 @@
+HtDig::Database
+Version 0.52, April 20, 2000
+
+DESCRIPTION
+
+    This module provides a perl interface to the ht://Dig database.
+    It has been tested with ht://Dig 3.1.4, and will probably work
+    with version 3.1.5 as well.  Because of changes in the database
+    format, it ***will not work*** with version 3.2 and later.
+
+    In fact, this implementation is probably a dead end.  It tries
+    to duplicate the functions of ht://Dig in perl, but a better
+    solution would be an XS module which would link directly to
+    the ht://Dig code.  Until someone gets around to creating such
+    a module, I hope this code provides a useful stopgap solution.
+
+EXAMPLES
+
+    Sample scripts in the "eg" subdirectory show how the
+    HtDig::Database module can be used.
+
+PREREQUISITES
+
+    This package has been tested with perl 5.004_03.
+
+INSTALLATION
+
+    Just follow the usual procedure:
+
+       perl Makefile.PL
+       make
+       make test
+       make install
+
+AUTHOR
+
+    Warren Jones <wjones@halcyon.com>
+
+COPYRIGHT
+
+    Copyright (c) 2000 Warren Jones.  All rights reserved.
+    This program is free software; you can redistribute it
+    and/or modify it under the same terms as Perl itself.
+

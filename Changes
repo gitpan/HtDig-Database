@@ -1,0 +1,17 @@
+Revision history for Perl extension HtDig::Database.
+
+2000-04-20  Warren Jones <wjones@halcyon.com>
+
+    Release 0.52
+
+    Fixed @default_url_parts in Database.pm, which should
+    match "common_url_parts" in htcommon/defaults.cc.
+
+2000-04-19  Warren Jones <wjones@halcyon.com>
+
+    Release 0.51
+
+0.51  Wed Apr 19 14:19:56 2000
+	- original version; created by h2xs 1.1.1.3 with options
+		-v 0.51 -cfn HtDig::Database
+
